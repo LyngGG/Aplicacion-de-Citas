@@ -38,6 +38,6 @@ public class MensajeService {
         Mensaje saved = mensajeRepository.save(mensaje);
         messageBroker.publicar(match.getId(), remitenteId, saved.getId());
 
-        return new MensajeResponseDto(saved.getId(), saved.getTimestamp());
+        return new MensajeResponseDto(saved.getId(), saved.getTexto(), saved.getTimestamp(), saved.isLeido());
     }
 }

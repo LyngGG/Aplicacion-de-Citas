@@ -8,5 +8,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MensajeResponseDto {
     private Long          mensajeId;
+    private String        texto;
     private LocalDateTime timestamp;
+    private boolean       leido;
 }

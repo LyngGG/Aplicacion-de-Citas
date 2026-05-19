@@ -3,6 +3,7 @@ package es.upm.fi.citas_backend.service;
 import es.upm.fi.citas_backend.domain.Descubrimiento;
 import es.upm.fi.citas_backend.domain.Perfil;
 import es.upm.fi.citas_backend.domain.Usuario;
+import es.upm.fi.citas_backend.dto.DescubrimientoResponseDto;
 import es.upm.fi.citas_backend.dto.PerfilDto;
 import es.upm.fi.citas_backend.exception.UsuarioNotFoundException;
 import es.upm.fi.citas_backend.repository.DescubrimientoRepository;
@@ -27,7 +28,7 @@ public class DescubrimientoService {
     private final UsuarioRepository        usuarioRepository;
 
     @Transactional
-    public List<PerfilDto> buscarCandidatos(
+    public DescubrimientoResponseDto buscarCandidatos(
             Perfil perfilContexto,
             List<Long> idsExcluidos,
             int pagina,
@@ -46,8 +47,9 @@ public class DescubrimientoService {
         );
 
         List<Perfil> diversificados = aplicarDiversidadYFrescura(candidatos);
-        registrarDescubrimiento(perfilContexto.getUsuario().getId(), diversificados);
-        return componerRespuestaMinima(diversificados);
+        LocalDateTime fechaConsulta = registrarDescubrimiento(perfilContexto.getUsuario().getId(), diversificados);
+        List<PerfilDto> resultados = componerRespuestaMinima(diversificados);
+        return new DescubrimientoResponseDto(fechaConsulta, resultados);
     }
 
     private List<Perfil> aplicarDiversidadYFrescura(List<Perfil> perfiles) {
@@ -57,19 +59,21 @@ public class DescubrimientoService {
         return resultado;
     }
 
-    private void registrarDescubrimiento(Long usuarioId, List<Perfil> perfiles) {
+    private LocalDateTime registrarDescubrimiento(Long usuarioId, List<Perfil> perfiles) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
             .orElseThrow(() -> new UsuarioNotFoundException(usuarioId));
 
+        LocalDateTime ahora = LocalDateTime.now();
         List<Descubrimiento> registros = perfiles.stream()
             .map(p -> Descubrimiento.builder()
                 .usuario(usuario)
                 .perfil(p)
-                .fechaConsulta(LocalDateTime.now())
+                .fechaConsulta(ahora)
                 .build())
             .collect(Collectors.toList());
 
         descubrimientoRepository.saveAll(registros);
+        return ahora;
     }
 
     private List<PerfilDto> componerRespuestaMinima(List<Perfil> perfiles) {
@@ -78,9 +82,10 @@ public class DescubrimientoService {
                 p.getId(),
                 p.getNombre(),
                 p.getEdad(),
+                p.getDescripcion(),
                 p.getUbicacion(),
-                p.getIntereses(),
-                p.getFotos() != null && !p.getFotos().isEmpty() ? p.getFotos().get(0) : null
+                p.getFotos(),
+                p.getIntereses()
             ))
             .collect(Collectors.toList());
     }

@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -18,4 +19,6 @@ public class SwipeRequestDto {
 
     @NotNull(message = "accion es obligatoria")
     private String accion;
+
+    private LocalDateTime timestamp;
 }

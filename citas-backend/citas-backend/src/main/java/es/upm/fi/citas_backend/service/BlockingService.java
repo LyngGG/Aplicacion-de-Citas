@@ -3,6 +3,7 @@ package es.upm.fi.citas_backend.service;
 import es.upm.fi.citas_backend.broker.MessageBroker;
 import es.upm.fi.citas_backend.domain.Bloqueo;
 import es.upm.fi.citas_backend.domain.Usuario;
+import es.upm.fi.citas_backend.dto.BloqueoResponseDto;
 import es.upm.fi.citas_backend.exception.BloqueoYaExisteException;
 import es.upm.fi.citas_backend.exception.UsuarioNotFoundException;
 import es.upm.fi.citas_backend.repository.BloqueoRepository;
@@ -24,7 +25,7 @@ public class BlockingService {
     private final MessageBroker     messageBroker;
 
     @Transactional
-    public Long bloquearUsuario(Long bloqueadorId, Long bloqueadoId) {
+    public BloqueoResponseDto bloquearUsuario(Long bloqueadorId, Long bloqueadoId) {
 
         if (bloqueoRepository.existeBloqueo(bloqueadorId, bloqueadoId)) {
             throw new BloqueoYaExisteException(bloqueadorId, bloqueadoId);
@@ -41,13 +42,13 @@ public class BlockingService {
             .fechaBloqueo(LocalDateTime.now())
             .build();
 
-        Long bloqueoId = bloqueoRepository.save(bloqueo).getId();
+        Bloqueo saved = bloqueoRepository.save(bloqueo);
         log.info("[BlockingService] Bloqueo creado → id={} bloqueador={} bloqueado={}",
-            bloqueoId, bloqueadorId, bloqueadoId);
+            saved.getId(), bloqueadorId, bloqueadoId);
 
         matchService.invalidarMatchSiExiste(bloqueadorId, bloqueadoId);
         messageBroker.publicarBloqueo(bloqueadorId, bloqueadoId);
 
-        return bloqueoId;
+        return new BloqueoResponseDto(saved.getId(), saved.getFechaBloqueo());
     }
 }

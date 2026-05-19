@@ -20,9 +20,10 @@ public class PerfilController {
             1L,
             "Nombre Perfil",
             25,
+            "Descripción del perfil",
             "Madrid",
-            java.util.List.of("viajes", "cine"),
-            "foto-principal.jpg"
+            java.util.List.of("foto-1.jpg", "foto-2.jpg"),
+            java.util.List.of("viajes", "cine")
         );
         return ResponseEntity.ok(response);
     }
@@ -36,9 +37,10 @@ public class PerfilController {
             1L,
             req.getNombre(),
             req.getEdad(),
+            req.getDescripcion(),
             req.getUbicacion(),
-            req.getIntereses(),
-            req.getFotos() != null && !req.getFotos().isEmpty() ? req.getFotos().get(0) : null
+            req.getFotos() != null ? req.getFotos() : java.util.List.of(),
+            req.getIntereses() != null ? req.getIntereses() : java.util.List.of()
         );
         return ResponseEntity.ok(response);
     }

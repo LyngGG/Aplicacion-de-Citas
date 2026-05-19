@@ -19,8 +19,8 @@ public class BlockingController {
     public ResponseEntity<BloqueoResponseDto> bloquearUsuario(
             @Valid @RequestBody BloqueoRequestDto req) {
 
-        Long bloqueoId = blockingService.bloquearUsuario(req.getBloqueadorId(), req.getBloqueadoId());
-        return ResponseEntity.ok(new BloqueoResponseDto(bloqueoId, "Bloqueo realizado correctamente"));
+        BloqueoResponseDto response = blockingService.bloquearUsuario(req.getBloqueadorId(), req.getBloqueadoId());
+        return ResponseEntity.ok(response);
     }
 }
 

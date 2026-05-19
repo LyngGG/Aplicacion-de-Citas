@@ -10,7 +10,8 @@ public class PerfilDto {
     private Long         id;
     private String       nombre;
     private Integer      edad;
+    private String       descripcion;
     private String       ubicacion;
+    private List<String> fotos;
     private List<String> intereses;
-    private String       fotoPrincipal;
 }

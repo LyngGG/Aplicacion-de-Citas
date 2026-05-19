@@ -28,9 +28,9 @@ public class DiscoveryController {
 
         Perfil perfilContexto   = perfilService.obtenerPerfil(usuarioId);
         List<Long> idsExcluidos = swipeService.obtenerInteraccionesRealizadas(usuarioId);
-        List<PerfilDto> resultados = descubrimientoService
+        DescubrimientoResponseDto resultados = descubrimientoService
             .buscarCandidatos(perfilContexto, idsExcluidos, pagina, limite);
 
-        return ResponseEntity.ok(new DescubrimientoResponseDto(resultados));
+        return ResponseEntity.ok(resultados);
     }
 }

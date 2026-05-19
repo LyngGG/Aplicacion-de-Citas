@@ -69,7 +69,9 @@ class MensajeServiceTest {
         assertFalse(guardado.isLeido());
 
         assertEquals(99L, response.getMensajeId());
+        assertEquals("hola", response.getTexto());
         assertEquals(guardado.getTimestamp(), response.getTimestamp());
+        assertFalse(response.isLeido());
 
         verify(messageBroker).publicar(match.getId(), remitenteId, 99L);
     }

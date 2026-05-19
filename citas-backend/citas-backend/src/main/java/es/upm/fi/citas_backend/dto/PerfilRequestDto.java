@@ -18,7 +18,8 @@ public class PerfilRequestDto {
     @NotNull(message = "edad es obligatoria")
     private Integer edad;
 
+    private String descripcion;
     private String ubicacion;
-    private List<String> intereses;
     private List<String> fotos;
+    private List<String> intereses;
 }
