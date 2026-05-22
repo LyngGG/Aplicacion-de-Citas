@@ -21,4 +21,7 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
         @Param("u1_id") Long u1_id,
         @Param("u2_id") Long u2_id
     );
+
+    @Query("SELECT m FROM Match m WHERE m.usuario1.id = :usuarioId OR m.usuario2.id = :usuarioId")
+    java.util.List<Match> findByUsuarioId(@Param("usuarioId") Long usuarioId);
 }

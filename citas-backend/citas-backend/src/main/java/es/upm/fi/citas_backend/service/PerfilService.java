@@ -38,13 +38,12 @@ public class PerfilService {
      * INDIRECCIÓN: CacheService evita acceso frecuente a BD.
      */
     @Transactional(readOnly = true)
-    @SuppressWarnings("unchecked")
     public Perfil obtenerPerfil(Long usuarioId) {
         String key = CACHE_PREFIX + usuarioId;
         return (Perfil) cache.get(key).orElseGet(() -> {
             log.debug("[PerfilService] Cache miss → cargando desde BD usuarioId={}", usuarioId);
             Perfil perfil = perfilRepository.findByUsuarioId(usuarioId)
-                .orElseThrow(() -> new PerfilNotFoundException(usuarioId));
+                    .orElseThrow(() -> new PerfilNotFoundException(usuarioId));
             cache.set(key, perfil);
             return perfil;
         });
@@ -65,12 +64,12 @@ public class PerfilService {
      */
     @Transactional
     public PerfilDto actualizarPerfil(Long usuarioId, PerfilRequestDto req) {
-        
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-            .orElseThrow(() -> new UsuarioNotFoundException(usuarioId));
+
+        usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new UsuarioNotFoundException(usuarioId));
 
         Perfil perfil = perfilRepository.findByUsuarioId(usuarioId)
-            .orElseThrow(() -> new PerfilNotFoundException(usuarioId));
+                .orElseThrow(() -> new PerfilNotFoundException(usuarioId));
 
         // Actualizar campos
         perfil.setNombre(req.getNombre());
@@ -81,11 +80,11 @@ public class PerfilService {
         perfil.setIntereses(req.getIntereses() != null ? req.getIntereses() : List.of());
 
         Perfil updated = perfilRepository.save(perfil);
-        
+
         // Invalidar caché
         String cacheKey = CACHE_PREFIX + usuarioId;
         cache.evict(cacheKey);
-        
+
         log.info("[PerfilService] Perfil actualizado → usuarioId={}, nombre={}", usuarioId, updated.getNombre());
 
         return convertirADto(updated);
@@ -97,9 +96,9 @@ public class PerfilService {
      */
     @Transactional
     public PerfilDto crearPerfil(Long usuarioId, PerfilRequestDto req) {
-        
+
         Usuario usuario = usuarioRepository.findById(usuarioId)
-            .orElseThrow(() -> new UsuarioNotFoundException(usuarioId));
+                .orElseThrow(() -> new UsuarioNotFoundException(usuarioId));
 
         // Verificar que no existe perfil
         if (perfilRepository.findByUsuarioId(usuarioId).isPresent()) {
@@ -107,14 +106,14 @@ public class PerfilService {
         }
 
         Perfil perfil = Perfil.builder()
-            .usuario(usuario)
-            .nombre(req.getNombre())
-            .edad(req.getEdad())
-            .descripcion(req.getDescripcion())
-            .ubicacion(req.getUbicacion())
-            .fotos(req.getFotos() != null ? req.getFotos() : List.of())
-            .intereses(req.getIntereses() != null ? req.getIntereses() : List.of())
-            .build();
+                .usuario(usuario)
+                .nombre(req.getNombre())
+                .edad(req.getEdad())
+                .descripcion(req.getDescripcion())
+                .ubicacion(req.getUbicacion())
+                .fotos(req.getFotos() != null ? req.getFotos() : List.of())
+                .intereses(req.getIntereses() != null ? req.getIntereses() : List.of())
+                .build();
 
         Perfil saved = perfilRepository.save(perfil);
         log.info("[PerfilService] Perfil creado → usuarioId={}, perfilId={}", usuarioId, saved.getId());
@@ -127,16 +126,16 @@ public class PerfilService {
      */
     @Transactional
     public void eliminarPerfil(Long usuarioId) {
-        
+
         Perfil perfil = perfilRepository.findByUsuarioId(usuarioId)
-            .orElseThrow(() -> new PerfilNotFoundException(usuarioId));
+                .orElseThrow(() -> new PerfilNotFoundException(usuarioId));
 
         perfilRepository.delete(perfil);
-        
+
         // Invalidar caché
         String cacheKey = CACHE_PREFIX + usuarioId;
         cache.evict(cacheKey);
-        
+
         log.info("[PerfilService] Perfil eliminado → usuarioId={}", usuarioId);
     }
 
@@ -145,13 +144,12 @@ public class PerfilService {
      */
     private PerfilDto convertirADto(Perfil perfil) {
         return new PerfilDto(
-            perfil.getId(),
-            perfil.getNombre(),
-            perfil.getEdad(),
-            perfil.getDescripcion(),
-            perfil.getUbicacion(),
-            perfil.getFotos() != null ? perfil.getFotos() : List.of(),
-            perfil.getIntereses() != null ? perfil.getIntereses() : List.of()
-        );
+                perfil.getId(),
+                perfil.getNombre(),
+                perfil.getEdad(),
+                perfil.getDescripcion(),
+                perfil.getUbicacion(),
+                perfil.getFotos() != null ? perfil.getFotos() : List.of(),
+                perfil.getIntereses() != null ? perfil.getIntereses() : List.of());
     }
 }

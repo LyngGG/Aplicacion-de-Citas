@@ -4,7 +4,6 @@ import es.upm.fi.citas_backend.dto.NotificacionResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -12,13 +11,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NotificacionController {
 
+    private final es.upm.fi.citas_backend.service.NotificationService notificationService;
+
     @GetMapping
     public ResponseEntity<List<NotificacionResponseDto>> obtenerNotificaciones(@PathVariable Long usuarioId) {
-        // TODO: Obtener notificaciones del usuario (solo lectura, se generan de forma asíncrona)
-        List<NotificacionResponseDto> notificaciones = List.of(
-            new NotificacionResponseDto(1L, "ACEPTADO", "Te ha gustado", LocalDateTime.now(), false),
-            new NotificacionResponseDto(2L, "MATCH", "Nuevo match", LocalDateTime.now(), false)
-        );
+        List<NotificacionResponseDto> notificaciones = notificationService.obtenerNotificaciones(usuarioId);
         return ResponseEntity.ok(notificaciones);
     }
 }

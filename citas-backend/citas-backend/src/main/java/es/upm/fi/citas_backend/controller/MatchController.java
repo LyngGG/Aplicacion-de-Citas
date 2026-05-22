@@ -12,27 +12,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MatchController {
 
+    private final es.upm.fi.citas_backend.service.MatchService matchService;
+
     @GetMapping
     public ResponseEntity<List<MatchResponseDto>> listarMatches(
             @RequestParam Long usuarioId) {
-        // TODO: Obtener matches del usuario
-        List<MatchResponseDto> matches = List.of(
-            new MatchResponseDto(1L, usuarioId, 2L, LocalDateTime.now(), "ACTIVO"),
-            new MatchResponseDto(2L, usuarioId, 3L, LocalDateTime.now(), "ACTIVO")
-        );
+        List<MatchResponseDto> matches = matchService.listarMatches(usuarioId);
         return ResponseEntity.ok(matches);
     }
 
     @GetMapping("/{matchId}")
-    public ResponseEntity<MatchResponseDto> obtenerMatch(@PathVariable Long matchId) {
-        // TODO: Obtener match específico
-        MatchResponseDto response = new MatchResponseDto(
-            matchId,
-            1L,
-            2L,
-            LocalDateTime.now(),
-            "ACTIVO"
-        );
+    public ResponseEntity<MatchResponseDto> obtenerMatch(
+            @PathVariable Long matchId,
+            @RequestParam Long usuarioId) {
+        MatchResponseDto response = matchService.obtenerMatchDto(matchId, usuarioId);
         return ResponseEntity.ok(response);
     }
 }

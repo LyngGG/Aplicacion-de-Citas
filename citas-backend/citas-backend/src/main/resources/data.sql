@@ -47,8 +47,8 @@ INSERT INTO mensajes (id, match_id, remitente_id, texto, timestamp, leido) VALUE
 -- Lucía hizo LIKE a Mario, Mario hizo LIKE a Lucía (generó el match 2)
 -- Ana hizo DISLIKE a Mario (no aparecerá en su descubrimiento)
 INSERT INTO swipes (id, remitente_id, destinatario_id, accion, timestamp) VALUES
-  (1, 1, 2, 'LIKE',    '2025-01-10 09:50:00'),
-  (2, 2, 1, 'LIKE',    '2025-01-10 09:55:00'),
-  (3, 3, 4, 'LIKE',    '2025-01-11 11:00:00'),
-  (4, 4, 3, 'LIKE',    '2025-01-11 11:30:00'),
-  (5, 1, 4, 'DISLIKE', '2025-01-10 09:48:00');
+  (1, 1, 2, 'ACEPTADO',  '2025-01-10 09:50:00'),
+  (2, 2, 1, 'ACEPTADO',  '2025-01-10 09:55:00'),
+  (3, 3, 4, 'ACEPTADO',  '2025-01-11 11:00:00'),
+  (4, 4, 3, 'ACEPTADO',  '2025-01-11 11:30:00'),
+  (5, 1, 4, 'RECHAZADO', '2025-01-10 09:48:00');
