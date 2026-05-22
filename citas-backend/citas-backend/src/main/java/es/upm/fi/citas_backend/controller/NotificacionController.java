@@ -16,7 +16,7 @@ public class NotificacionController {
     public ResponseEntity<List<NotificacionResponseDto>> obtenerNotificaciones(@PathVariable Long usuarioId) {
         // TODO: Obtener notificaciones del usuario (solo lectura, se generan de forma asíncrona)
         List<NotificacionResponseDto> notificaciones = List.of(
-            new NotificacionResponseDto(1L, "LIKE", "Te ha gustado", LocalDateTime.now(), false),
+            new NotificacionResponseDto(1L, "ACEPTADO", "Te ha gustado", LocalDateTime.now(), false),
             new NotificacionResponseDto(2L, "MATCH", "Nuevo match", LocalDateTime.now(), false)
         );
         return ResponseEntity.ok(notificaciones);

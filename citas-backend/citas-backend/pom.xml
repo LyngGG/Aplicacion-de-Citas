@@ -40,6 +40,14 @@
       <artifactId>spring-boot-starter-websocket</artifactId>
     </dependency>
 
+    <!-- ── Spring Security ────────────────────────────────────────────
+         Necesario para encriptación de contraseñas (BCryptPasswordEncoder)
+         y autenticación.  -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+
     <!-- ── JPA + H2 ────────────────────────────────────────────────── -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

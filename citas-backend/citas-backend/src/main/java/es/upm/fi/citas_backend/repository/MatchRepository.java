@@ -12,13 +12,13 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
         SELECT m FROM Match m
         WHERE m.estado = 'ACTIVO'
           AND (
-            (m.usuario1.id = :u1 AND m.usuario2.id = :u2)
+            (m.usuario1.id = :u1_id AND m.usuario2.id = :u2_id)
             OR
-            (m.usuario1.id = :u2 AND m.usuario2.id = :u1)
+            (m.usuario1.id = :u2_id AND m.usuario2.id = :u1_id)
           )
         """)
     Optional<Match> findMatchActivoEntreUsuarios(
-        @Param("u1") Long u1,
-        @Param("u2") Long u2
+        @Param("u1_id") Long u1_id,
+        @Param("u2_id") Long u2_id
     );
 }

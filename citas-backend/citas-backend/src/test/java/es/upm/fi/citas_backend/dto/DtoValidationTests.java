@@ -21,11 +21,11 @@ class DtoValidationTests {
     @Test
     void testSwipeRequestDtoAtributos() {
         LocalDateTime now = LocalDateTime.now();
-        SwipeRequestDto dto = new SwipeRequestDto(1L, 2L, "LIKE", now);
+        SwipeRequestDto dto = new SwipeRequestDto(1L, 2L, "ACEPTADO", now);
         
         assertEquals(1L, dto.getUsuarioOrigen());
         assertEquals(2L, dto.getUsuarioDestino());
-        assertEquals("LIKE", dto.getAccion());
+        assertEquals("ACEPTADO", dto.getAccion());
         assertEquals(now, dto.getTimestamp());
     }
 
@@ -175,7 +175,7 @@ class DtoValidationTests {
     void testCoherenciaTimestampEnSwipe() {
         // Validar que timestamp está en SwipeRequestDto
         LocalDateTime now = LocalDateTime.now();
-        SwipeRequestDto dto = new SwipeRequestDto(1L, 2L, "LIKE", now);
+        SwipeRequestDto dto = new SwipeRequestDto(1L, 2L, "ACEPTADO", now);
         
         assertNotNull(dto.getTimestamp(), "timestamp debe estar presente en SwipeRequestDto");
         assertEquals(now, dto.getTimestamp(), "timestamp debe coincidir");

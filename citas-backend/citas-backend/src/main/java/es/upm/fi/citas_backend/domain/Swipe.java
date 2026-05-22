@@ -28,5 +28,5 @@ public class Swipe {
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
-    public enum AccionSwipe { LIKE, DISLIKE, SUPERLIKE }
+    public enum AccionSwipe { ACEPTADO, RECHAZADO }
 }
