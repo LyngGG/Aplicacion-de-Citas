@@ -136,7 +136,7 @@ class IntegrationTests {
 
         assertNotNull(saved.getId(), "swipe id no debe ser null");
         assertNotNull(saved.getTimestamp(), "swipe timestamp no debe ser null");
-        assertEquals("ACEPTADO", saved.getAccion(), "acción debe ser ACEPTADO");
+        assertEquals(Swipe.AccionSwipe.ACEPTADO, saved.getAccion(), "acción debe ser ACEPTADO");
     }
 
     @Test
