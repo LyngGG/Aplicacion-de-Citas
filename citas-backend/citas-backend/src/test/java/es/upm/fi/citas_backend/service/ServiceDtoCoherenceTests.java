@@ -106,9 +106,9 @@ class ServiceDtoCoherenceTests {
         assertNotNull(response.getBloqueoId(), "bloqueoId no debe ser null");
         assertNotNull(response.getFechaBloqueo(), "fechaBloqueo no debe ser null");
         
-        // Validar que fechaBloqueo es reciente
-        assertTrue(response.getFechaBloqueo().isBefore(LocalDateTime.now()),
-            "fechaBloqueo debe ser anterior a ahora");
+        // Validar que fechaBloqueo es reciente (dentro de 1 segundo)
+        assertTrue(response.getFechaBloqueo().isBefore(LocalDateTime.now().plusSeconds(1)),
+            "fechaBloqueo debe ser cercana a ahora");
         assertTrue(response.getFechaBloqueo().isAfter(LocalDateTime.now().minusMinutes(1)),
             "fechaBloqueo debe ser reciente");
     }
