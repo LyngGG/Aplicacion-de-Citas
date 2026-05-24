@@ -12,6 +12,7 @@ citas_backend/
 ├── repository         → Acceso a datos (repositorios JPA / interfaces DAO)
 ├── service            → Lógica de negocio (servicios de aplicación)
 └── websocket          → Gestión de sesiones WebSocket (en tiempo real)
+```
 
 ## Estructura del proyecto
 Resumen de carpetas y archivos principales del backend.
