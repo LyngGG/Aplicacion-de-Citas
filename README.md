@@ -284,7 +284,6 @@ citas-backend/
 
 ```bash
 git clone https://github.com/LyngGG/Aplicacion-de-Citas.git
-cd "Entrega 2. Aplicación de Citas"
 cd AplicacionCitas/citas-backend/citas-backend
 ```
 
