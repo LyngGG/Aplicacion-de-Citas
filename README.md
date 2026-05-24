@@ -122,140 +122,150 @@ Patrones Utilizados:
 
 ---
 
-## Estructura de Directorios
-
-```
-AplicacionCitas/
-├── README.md                                    # Este archivo
-│
-└── citas-backend/
-    └── citas-backend/
-        │
-        ├── pom.xml                          # Configuración Maven (dependencias)
-        ├── mvnw / mvnw.cmd                  # Maven Wrapper (Windows/Unix)
-        │
-        ├── src/
-        │   │
-        │   ├── main/
-        │   │   │
-        │   │   ├── java/es/upm/fi/citas_backend/
-        │   │   │   │
-        │   │   │   ├── CitasBackendApplication.java      # Punto de entrada
-        │   │   │   │
-        │   │   │   ├── broker/                        # Broker de mensajes
-        │   │   │   │   └── [Implementación de cola de mensajes]
-        │   │   │   │
-        │   │   │   ├── config/                        # Configuración
-        │   │   │   │   ├── AsyncConfig.java              # Configuración de async/thread pool
-        │   │   │   │   ├── JacksonConfig.java            # Configuración de serialización JSON
-        │   │   │   │   ├── SecurityConfig.java           # Encriptación (BCrypt)
-        │   │   │   │   └── WebSocketConfig.java          # Configuración de WebSocket
-        │   │   │   │
-        │   │   │   ├── controller/                    # REST Controllers
-        │   │   │   │   ├── BlockingController.java       # Gestión de bloqueos
-        │   │   │   │   ├── ChatController.java           # Historial de chats
-        │   │   │   │   ├── DiscoveryController.java      # Descubrimiento de perfiles
-        │   │   │   │   ├── MatchController.java          # Gestión de matches
-        │   │   │   │   ├── NotificacionController.java   # Sistema de notificaciones
-        │   │   │   │   ├── PerfilController.java         # Gestión de perfiles
-        │   │   │   │   ├── SwipeController.java          # Sistema de swipes
-        │   │   │   │   ├── UsuarioController.java        # Auth y usuarios
-        │   │   │   │   └── WebSocketChatController.java  # Handler de WebSocket
-        │   │   │   │
-        │   │   │   ├── domain/                        # Entidades JPA
-        │   │   │   │   ├── Bloqueo.java                  # Relación: Usuario bloqueado
-        │   │   │   │   ├── Descubrimiento.java           # Historial de perfiles vistos
-        │   │   │   │   ├── Match.java                    # Entidad de match
-        │   │   │   │   ├── Mensaje.java                  # Mensajes de chat
-        │   │   │   │   ├── Perfil.java                   # Perfil de usuario
-        │   │   │   │   ├── Swipe.java                    # Swipes (like/reject)
-        │   │   │   │   └── Usuario.java                  # Entidad usuario
-        │   │   │   │
-        │   │   │   ├── dto/                           # Data Transfer Objects
-        │   │   │   │   ├── BloqueoRequestDto.java        # Request para bloquear
-        │   │   │   │   ├── BloqueoResponseDto.java       # Response de bloqueo
-        │   │   │   │   ├── DescubrimientoResponseDto.java
-        │   │   │   │   ├── EnviarMensajeRequestDto.java  # Request de mensaje
-        │   │   │   │   ├── MatchResponseDto.java         # Response de match
-        │   │   │   │   ├── MensajeResponseDto.java       # Response de mensaje
-        │   │   │   │   ├── NotificacionResponseDto.java  # Response de notificación
-        │   │   │   │   ├── PerfilDto.java                # DTO de perfil
-        │   │   │   │   ├── PerfilRequestDto.java         # Request de perfil
-        │   │   │   │   ├── SwipeRequestDto.java          # Request de swipe
-        │   │   │   │   ├── UsuarioLoginRequestDto.java   # Request de login
-        │   │   │   │   ├── UsuarioRegistroRequestDto.java# Request de registro
-        │   │   │   │   ├── UsuarioResponseDto.java       # Response de usuario
-        │   │   │   │   ├── WebSocketMensajeDto.java      # DTO para WebSocket
-        │   │   │   │   └── WsMensajeRequestDto.java      # Request WebSocket
-        │   │   │   │
-        │   │   │   ├── exception/                     # Excepciones personalizadas
-        │   │   │   │   └── [Manejo global de errores]
-        │   │   │   │
-        │   │   │   ├── fake/                          # Datos de prueba
-        │   │   │   │   └── [Generadores de datos fake para testing]
-        │   │   │   │
-        │   │   │   ├── repository/                    # Data Access Layer
-        │   │   │   │   ├── BloqueoRepository.java        # JpaRepository<Bloqueo>
-        │   │   │   │   ├── DescubrimientoRepository.java
-        │   │   │   │   ├── MatchRepository.java
-        │   │   │   │   ├── MensajeRepository.java
-        │   │   │   │   ├── PerfilRepository.java
-        │   │   │   │   ├── SwipeRepository.java
-        │   │   │   │   └── UsuarioRepository.java
-        │   │   │   │
-        │   │   │   ├── service/                       # Business Logic
-        │   │   │   │   ├── BlockingService.java          # Lógica de bloqueos
-        │   │   │   │   ├── ChatService.java              # Lógica de chat
-        │   │   │   │   ├── DescubrimientoService.java    # Descubrimiento
-        │   │   │   │   ├── DiscoveryService.java         # Alternativa de descubrimiento
-        │   │   │   │   ├── MatchService.java             # Lógica de matching
-        │   │   │   │   ├── MensajeService.java           # Gestión de mensajes
-        │   │   │   │   ├── NotificationService.java      # Sistema de notificaciones
-        │   │   │   │   ├── PerfilService.java            # Gestión de perfiles
-        │   │   │   │   ├── SwipeService.java             # Lógica de swipes
-        │   │   │   │   └── UsuarioService.java           # Gestión de usuarios
-        │   │   │   │
-        │   │   │   └── websocket/                     # WebSocket handlers
-        │   │   │       └── [Handlers de conexión WebSocket]
-        │   │   │
-        │   │   └── resources/
-        │   │       ├── application.properties         # Configuración de Spring
-        │   │       └── data.sql                       # Script de inicialización BD
-        │   │
-        │   └── test/
-        │       ├── java/es/upm/fi/citas_backend/
-        │       │   ├── CitasBackendApplicationTests.java
-        │       │   ├── controller/
-        │       │   │   └── IntegrationTests.java         # Tests de integración REST
-        │       │   ├── dto/
-        │       │   │   └── DtoValidationTests.java       # Tests de validación DTOs
-        │       │   ├── fake/
-        │       │   │   └── [Datos fake para tests]
-        │       │   ├── service/
-        │       │   │   ├── BlockingServiceTest.java
-        │       │   │   ├── MatchServiceTest.java
-        │       │   │   ├── MensajeServiceTest.java
-        │       │   │   ├── NotificationServiceTest.java
-        │       │   │   ├── PerfilServiceTest.java
-        │       │   │   ├── ServiceDtoCoherenceTests.java
-        │       │   │   ├── SwipeServiceTest.java
-        │       │   │   └── UsuarioServiceTest.java
-        │       │   └── websocket/
-        │       │       └── [Tests de WebSocket]
-        │       │
-        │       └── resources/
-        │           └── application.properties         # Config para tests
-        │
-        └── target/                                     # Artefactos compilados
-            ├── classes/                                  # Clases compiladas
-            ├── test-classes/                             # Clases de test compiladas
-            ├── jacoco.exec                               # Reporte de cobertura
-            ├── generated-sources/                        # Fuentes generadas
-            ├── generated-test-sources/
-            ├── site/jacoco/                              # Reporte HTML de cobertura
-            └── surefire-reports/                         # Reportes de tests JUnit
+```text
+citas_backend/
+├── broker/events      → Gestión de eventos y mensajería asíncrona (MessageBroker)
+├── config             → Configuración de la aplicación (seguridad, WebSocket, etc.)
+├── controller         → Capa de controladores (API REST y WebSocket)
+├── domain             → Entidades del modelo de dominio (Usuario, Match, Mensaje, etc.)
+├── dto                → Objetos de transferencia de datos (DTOs)
+├── exception          → Manejadores de excepciones y errores personalizados
+├── fake               → Datos de prueba / implementaciones falsas para testing
+├── repository         → Acceso a datos (repositorios JPA / interfaces DAO)
+├── service            → Lógica de negocio (servicios de aplicación)
+└── websocket          → Gestión de sesiones WebSocket (en tiempo real)
 ```
 
+## Estructura del proyecto
+Resumen de carpetas y archivos principales del backend.
+
+```text
+citas-backend/
+├── pom.xml
+└── src/
+    ├── main/
+    │   ├── java/
+    │   │   └── es/upm/fi/citasbackend/
+    │   │                   │   CitasBackendApplication.java         ← @SpringBootApplication
+    │   │                   │   
+    │   │                   ├───broker
+    │   │                   │   │   MessageBroker.java
+    │   │                   │   │   
+    │   │                   │   └───events
+    │   │                   │           MensajeNuevoEvent.java
+    │   │                   │           UsuarioBloqueadoEvent.java
+    │   │                   │           
+    │   │                   ├───config
+    │   │                   │       AsyncConfig.java
+    │   │                   │       JacksonConfig.java
+    │   │                   │       SecurityConfig.java
+    │   │                   │       WebSocketConfig.java
+    │   │                   │       
+    │   │                   ├───controller
+    │   │                   │       BlockingController.java         ← CU4
+    │   │                   │       ChatController.java             ← CU1
+    │   │                   │       DiscoveryController.java        ← CU3
+    │   │                   │       MatchController.java
+    │   │                   │       NotificacionController.java
+    │   │                   │       PerfilController.java
+    │   │                   │       SwipeController.java
+    │   │                   │       UsuarioController.java
+    │   │                   │       WebSocketChatController.java
+    │   │                   │       
+    │   │                   ├───domain
+    │   │                   │       Bloqueo.java
+    │   │                   │       Descubrimiento.java
+    │   │                   │       Match.java
+    │   │                   │       Mensaje.java
+    │   │                   │       Perfil.java
+    │   │                   │       Swipe.java
+    │   │                   │       Usuario.java
+    │   │                   │       
+    │   │                   ├───dto                     ← Data Transfer Object
+    │   │                   │       BloqueoRequestDto.java
+    │   │                   │       BloqueoResponseDto.java
+    │   │                   │       DescubrimientoResponseDto.java
+    │   │                   │       EnviarMensajeRequestDto.java
+    │   │                   │       MatchResponseDto.java
+    │   │                   │       MensajeResponseDto.java
+    │   │                   │       NotificacionResponseDto.java
+    │   │                   │       PerfilDto.java
+    │   │                   │       PerfilRequestDto.java
+    │   │                   │       SwipeRequestDto.java
+    │   │                   │       UsuarioLoginRequestDto.java
+    │   │                   │       UsuarioRegistroRequestDto.java
+    │   │                   │       UsuarioResponseDto.java
+    │   │                   │       WebSocketMensajeDto.java
+    │   │                   │       WsMensajeRequestDto.java
+    │   │                   │       
+    │   │                   ├───exception
+    │   │                   │       BloqueoYaExisteException.java
+    │   │                   │       GlobalExceptionHandler.java
+    │   │                   │       MatchNoActivoException.java
+    │   │                   │       MatchNotFoundException.java
+    │   │                   │       PerfilNotFoundException.java
+    │   │                   │       UsuarioNotFoundException.java
+    │   │                   │       
+    │   │                   ├───fake
+    │   │                   │       FakeCacheService.java           ← simula Redis
+    │   │                   │       FakePushService.java            ← simula FCM/APNs
+    │   │                   │       
+    │   │                   ├───repository
+    │   │                   │       BloqueoRepository.java
+    │   │                   │       DescubrimientoRepository.java
+    │   │                   │       MatchRepository.java
+    │   │                   │       MensajeRepository.java
+    │   │                   │       PerfilRepository.java
+    │   │                   │       SwipeRepository.java
+    │   │                   │       UsuarioRepository.java
+    │   │                   │       
+    │   │                   ├───service
+    │   │                   │       BlockingService.java            ← CU4
+    │   │                   │       ChatService.java                ← CU4 async
+    │   │                   │       DescubrimientoService.java      ← CU3
+    │   │                   │       DiscoveryService.java           ← CU4 async
+    │   │                   │       MatchService.java               ← CU1/CU2/CU4
+    │   │                   │       MensajeService.java             ← CU1/CU2
+    │   │                   │       NotificationService.java        ← CU1/CU2/CU4
+    │   │                   │       PerfilService.java              ← CU3
+    │   │                   │       SwipeService.java               ← CU3
+    │   │                   │       UsuarioService.java
+    │   │                   │       
+    │   │                   └───websocket
+    │   │                           ChatWebSocketHandler.java       ← CU2
+    │   │                           JwtHandshakeInterceptor.java    ← CU2 (FAKE)
+    │   │                           WebSocketSessionManager.java    ← CU2
+    │   │                           WebSocketConfig.java
+    │   │                           
+    │   └───resources
+    │           application.properties
+    │           data.sql
+    └───test
+        ├───java
+        │   └───es
+        │       └───upm
+        │           └───fi
+        │               └───citas_backend
+        │                   │   CitasBackendApplicationTests.java
+        │                   │   
+        │                   ├───controller
+        │                   │       IntegrationTests.java
+        │                   │       
+        │                   ├───dto
+        │                   │       DtoValidationTests.java
+        │                   │       
+        │                   └───service
+        │                           BlockingServiceTest.java
+        │                           MatchServiceTest.java
+        │                           MensajeServiceTest.java
+        │                           NotificationServiceTest.java
+        │                           PerfilServiceTest.java
+        │                           ServiceDtoCoherenceTests.java
+        │                           SwipeServiceTest.java
+        │                           UsuarioServiceTest.java
+        │                           
+        └───resources
+                application.properties
 ---
 
 ## Instalación y Configuración
@@ -819,151 +829,6 @@ Verifica que `spring.h2.console.enabled=true` esté en `application.properties`
 - `CU4.puml` - Diagrama caso de uso: Gestión de perfil
 - `dominio.puml` - Diagrama de entidades
 
-
-```text
-citas_backend/
-├── broker/events      → Gestión de eventos y mensajería asíncrona (MessageBroker)
-├── config             → Configuración de la aplicación (seguridad, WebSocket, etc.)
-├── controller         → Capa de controladores (API REST y WebSocket)
-├── domain             → Entidades del modelo de dominio (Usuario, Match, Mensaje, etc.)
-├── dto                → Objetos de transferencia de datos (DTOs)
-├── exception          → Manejadores de excepciones y errores personalizados
-├── fake               → Datos de prueba / implementaciones falsas para testing
-├── repository         → Acceso a datos (repositorios JPA / interfaces DAO)
-├── service            → Lógica de negocio (servicios de aplicación)
-└── websocket          → Gestión de sesiones WebSocket (en tiempo real)
-```
-
-## Estructura del proyecto
-Resumen de carpetas y archivos principales del backend.
-
-```text
-citas-backend/
-├── pom.xml
-└── src/
-    ├── main/
-    │   ├── java/
-    │   │   └── es/upm/fi/citasbackend/
-    │   │                   │   CitasBackendApplication.java         ← @SpringBootApplication
-    │   │                   │   
-    │   │                   ├───broker
-    │   │                   │   │   MessageBroker.java
-    │   │                   │   │   
-    │   │                   │   └───events
-    │   │                   │           MensajeNuevoEvent.java
-    │   │                   │           UsuarioBloqueadoEvent.java
-    │   │                   │           
-    │   │                   ├───config
-    │   │                   │       AsyncConfig.java
-    │   │                   │       JacksonConfig.java
-    │   │                   │       SecurityConfig.java
-    │   │                   │       WebSocketConfig.java
-    │   │                   │       
-    │   │                   ├───controller
-    │   │                   │       BlockingController.java         ← CU4
-    │   │                   │       ChatController.java             ← CU1
-    │   │                   │       DiscoveryController.java        ← CU3
-    │   │                   │       MatchController.java
-    │   │                   │       NotificacionController.java
-    │   │                   │       PerfilController.java
-    │   │                   │       SwipeController.java
-    │   │                   │       UsuarioController.java
-    │   │                   │       WebSocketChatController.java
-    │   │                   │       
-    │   │                   ├───domain
-    │   │                   │       Bloqueo.java
-    │   │                   │       Descubrimiento.java
-    │   │                   │       Match.java
-    │   │                   │       Mensaje.java
-    │   │                   │       Perfil.java
-    │   │                   │       Swipe.java
-    │   │                   │       Usuario.java
-    │   │                   │       
-    │   │                   ├───dto                     ← Data Transfer Object
-    │   │                   │       BloqueoRequestDto.java
-    │   │                   │       BloqueoResponseDto.java
-    │   │                   │       DescubrimientoResponseDto.java
-    │   │                   │       EnviarMensajeRequestDto.java
-    │   │                   │       MatchResponseDto.java
-    │   │                   │       MensajeResponseDto.java
-    │   │                   │       NotificacionResponseDto.java
-    │   │                   │       PerfilDto.java
-    │   │                   │       PerfilRequestDto.java
-    │   │                   │       SwipeRequestDto.java
-    │   │                   │       UsuarioLoginRequestDto.java
-    │   │                   │       UsuarioRegistroRequestDto.java
-    │   │                   │       UsuarioResponseDto.java
-    │   │                   │       WebSocketMensajeDto.java
-    │   │                   │       WsMensajeRequestDto.java
-    │   │                   │       
-    │   │                   ├───exception
-    │   │                   │       BloqueoYaExisteException.java
-    │   │                   │       GlobalExceptionHandler.java
-    │   │                   │       MatchNoActivoException.java
-    │   │                   │       MatchNotFoundException.java
-    │   │                   │       PerfilNotFoundException.java
-    │   │                   │       UsuarioNotFoundException.java
-    │   │                   │       
-    │   │                   ├───fake
-    │   │                   │       FakeCacheService.java           ← simula Redis
-    │   │                   │       FakePushService.java            ← simula FCM/APNs
-    │   │                   │       
-    │   │                   ├───repository
-    │   │                   │       BloqueoRepository.java
-    │   │                   │       DescubrimientoRepository.java
-    │   │                   │       MatchRepository.java
-    │   │                   │       MensajeRepository.java
-    │   │                   │       PerfilRepository.java
-    │   │                   │       SwipeRepository.java
-    │   │                   │       UsuarioRepository.java
-    │   │                   │       
-    │   │                   ├───service
-    │   │                   │       BlockingService.java            ← CU4
-    │   │                   │       ChatService.java                ← CU4 async
-    │   │                   │       DescubrimientoService.java      ← CU3
-    │   │                   │       DiscoveryService.java           ← CU4 async
-    │   │                   │       MatchService.java               ← CU1/CU2/CU4
-    │   │                   │       MensajeService.java             ← CU1/CU2
-    │   │                   │       NotificationService.java        ← CU1/CU2/CU4
-    │   │                   │       PerfilService.java              ← CU3
-    │   │                   │       SwipeService.java               ← CU3
-    │   │                   │       UsuarioService.java
-    │   │                   │       
-    │   │                   └───websocket
-    │   │                           ChatWebSocketHandler.java       ← CU2
-    │   │                           JwtHandshakeInterceptor.java    ← CU2 (FAKE)
-    │   │                           WebSocketSessionManager.java    ← CU2
-    │   │                           WebSocketConfig.java
-    │   │                           
-    │   └───resources
-    │           application.properties
-    │           data.sql
-    └───test
-        ├───java
-        │   └───es
-        │       └───upm
-        │           └───fi
-        │               └───citas_backend
-        │                   │   CitasBackendApplicationTests.java
-        │                   │   
-        │                   ├───controller
-        │                   │       IntegrationTests.java
-        │                   │       
-        │                   ├───dto
-        │                   │       DtoValidationTests.java
-        │                   │       
-        │                   └───service
-        │                           BlockingServiceTest.java
-        │                           MatchServiceTest.java
-        │                           MensajeServiceTest.java
-        │                           NotificationServiceTest.java
-        │                           PerfilServiceTest.java
-        │                           ServiceDtoCoherenceTests.java
-        │                           SwipeServiceTest.java
-        │                           UsuarioServiceTest.java
-        │                           
-        └───resources
-                application.properties
 
 
 
