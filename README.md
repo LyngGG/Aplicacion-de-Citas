@@ -266,6 +266,7 @@ citas-backend/
         │                           
         └───resources
                 application.properties
+```
 ---
 
 ## Instalación y Configuración
