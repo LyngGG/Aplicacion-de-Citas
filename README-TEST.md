@@ -107,3 +107,28 @@ Casos implementados en SwipeServiceTest:
 ## Cobertura (JaCoCo)
 
 El plugin de JaCoCo ya esta configurado en el pom. Para los metodos seleccionados se espera 100% de cobertura.
+
+## Ejecucion (tests y cobertura)
+
+```bash
+# Ejecutar todos los tests (desde: Aplicacion-de-Citas/citas-backend/citas-backend)
+mvn test
+
+# Alternativa con Maven Wrapper
+./mvnw test
+# o en Windows
+mvnw.cmd test
+```
+
+Ruta del informe de cobertura:
+- `citas-backend/citas-backend/target/site/jacoco/index.html`
+
+Abrir en Windows:
+```powershell
+Start-Process -FilePath "c:\Users\prestamo_admin\Desktop\ingenieria software\Entrega 2. Aplicación de Citas\Aplicacion-de-Citas\citas-backend\citas-backend\target\site\jacoco\index.html"
+```
+
+Para abrir directamente el paquete `es.upm.fi.citas_backend.service`:
+```powershell
+Start-Process -FilePath "c:\Users\prestamo_admin\Desktop\ingenieria software\Entrega 2. Aplicación de Citas\Aplicacion-de-Citas\citas-backend\citas-backend\target\site\jacoco\es.upm.fi.citas_backend.service\index.html"
+```

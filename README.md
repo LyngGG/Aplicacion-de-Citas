@@ -358,6 +358,28 @@ curl http://localhost:8080/usuarios/health
 # Deberías recibir: 200 OK
 ```
 
+### Ejecutar tests y cobertura (JaCoCo)
+
+```bash
+# Ejecutar todos los tests
+mvn test
+
+# Alternativa con Maven Wrapper
+./mvnw test
+# o en Windows
+mvnw.cmd test
+```
+
+El reporte de cobertura se genera automaticamente al ejecutar los tests.
+
+Ruta del informe:
+- `citas-backend/citas-backend/target/site/jacoco/index.html`
+
+Abrir en Windows:
+```powershell
+Start-Process -FilePath "c:\Users\prestamo_admin\Desktop\ingenieria software\Entrega 2. Aplicación de Citas\Aplicacion-de-Citas\citas-backend\citas-backend\target\site\jacoco\index.html"
+```
+
 ---
 
 ## Endpoints de la API

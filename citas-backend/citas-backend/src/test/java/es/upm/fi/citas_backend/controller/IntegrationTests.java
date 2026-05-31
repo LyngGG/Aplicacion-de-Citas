@@ -1,5 +1,6 @@
 package es.upm.fi.citas_backend.controller;
 
+import es.upm.fi.citas_backend.CitasBackendApplication;
 import es.upm.fi.citas_backend.domain.*;
 import es.upm.fi.citas_backend.dto.*;
 import es.upm.fi.citas_backend.repository.*;
@@ -12,7 +13,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -26,7 +31,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    classes = { CitasBackendApplication.class, IntegrationTests.TestSecurityConfig.class }
+)
 @Transactional
 class IntegrationTests {
 
@@ -64,6 +72,17 @@ class IntegrationTests {
     private Usuario usuario2;
     private Perfil perfil1;
     private Perfil perfil2;
+
+    @TestConfiguration
+    static class TestSecurityConfig {
+        @Bean
+        SecurityFilterChain testSecurityFilterChain(HttpSecurity http) throws Exception {
+            return http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .build();
+        }
+    }
 
     /*
      * Prepara el entorno de pruebas: configura RestAssured, limpia repositorios y
@@ -414,11 +433,22 @@ class IntegrationTests {
      */
     @Test
     void crearPerfil_yaExiste_devuelve500() {
+        String email = "perfil_dup_" + UUID.randomUUID() + "@test.com";
+        Long usuarioId = registrarUsuario(email, "secreto123");
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(Map.of("nombre", "Paula", "edad", 24))
+        .when()
+            .post("/usuarios/{usuarioId}/perfil", usuarioId)
+        .then()
+            .statusCode(201);
+
         given()
             .contentType(ContentType.JSON)
             .body(Map.of("nombre", "Otro", "edad", 30))
         .when()
-            .post("/usuarios/{usuarioId}/perfil", usuario1.getId())
+            .post("/usuarios/{usuarioId}/perfil", usuarioId)
         .then()
             .statusCode(500);
     }
@@ -458,7 +488,7 @@ class IntegrationTests {
     }
 
     private Long registrarUsuario(String email, String password) {
-        return given()
+        Number id = given()
             .contentType(ContentType.JSON)
             .body(Map.of("email", email, "password", password))
         .when()
@@ -467,5 +497,6 @@ class IntegrationTests {
             .statusCode(201)
             .extract()
             .path("id");
+        return id.longValue();
     }
 }
