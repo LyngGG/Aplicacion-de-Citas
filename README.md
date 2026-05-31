@@ -9,7 +9,7 @@ Backend de una aplicación de citas basada en arquitectura multicapa con Spring 
 ## Tabla de Contenidos
 
 - [Descripción General](#descripción-general)
-- [Casos de Uso](#casos-de-uso)
+- [Implementaciones para cada caso de uso](#implementaciones-para-cada-caso-de-uso)
 - [Tecnologías y Dependencias](#tecnologías-y-dependencias)
 - [Arquitectura del Proyecto](#arquitectura-del-proyecto)
 - [Estructura de Directorios](#estructura-de-directorios)
@@ -37,7 +37,7 @@ Este backend implementa un sistema completo de matching de perfiles de citas con
 
 ---
 
-## Casos de Uso
+## Implementaciones para cada caso de uso
 
 ### CU1: Registro y Login
 

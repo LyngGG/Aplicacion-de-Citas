@@ -6,20 +6,32 @@ import es.upm.fi.citas_backend.repository.*;
 import es.upm.fi.citas_backend.service.BlockingService;
 import es.upm.fi.citas_backend.service.DescubrimientoService;
 import es.upm.fi.citas_backend.service.MensajeService;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
 class IntegrationTests {
+
+    @LocalServerPort
+    private int port;
 
     @Autowired
     private BlockingService blockingService;
@@ -53,8 +65,15 @@ class IntegrationTests {
     private Perfil perfil1;
     private Perfil perfil2;
 
+    /*
+     * Prepara el entorno de pruebas: configura RestAssured, limpia repositorios y
+     * crea dos usuarios con sus perfiles para un estado base consistente.
+     */
     @BeforeEach
     void setUp() {
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = port;
+
         // Limpiar datos
         mensajeRepository.deleteAll();
         matchRepository.deleteAll();
@@ -104,6 +123,10 @@ class IntegrationTests {
         perfil2 = perfilRepository.save(perfil2);
     }
 
+    /*
+     * Verifica que un perfil persistido expone todos los atributos del dominio
+     * y que las listas contienen al menos un elemento.
+     */
     @Test
     void testPerfilDtoConTodosAtributos() {
         // Obtener perfil de la BD
@@ -123,6 +146,10 @@ class IntegrationTests {
         assertTrue(perfil.getIntereses().size() > 0, "intereses debe ser una lista");
     }
 
+    /*
+     * Persiste un swipe con timestamp y comprueba que id, timestamp y accion
+     * se guardan correctamente.
+     */
     @Test
     void testSwipeRequestDtoConTimestamp() {
         Swipe swipe = Swipe.builder()
@@ -139,6 +166,10 @@ class IntegrationTests {
         assertEquals(Swipe.AccionSwipe.ACEPTADO, saved.getAccion(), "acción debe ser ACEPTADO");
     }
 
+    /*
+     * Crea un match y un mensaje, y verifica que texto, timestamp y estado de leido
+     * se persisten correctamente.
+     */
     @Test
     void testMensajeResponseDtoConTodoAtributo() {
         // Crear un match
@@ -167,6 +198,9 @@ class IntegrationTests {
         assertFalse(mensaje.isLeido(), "leido debe ser false inicialmente");
     }
 
+    /*
+     * Crea un bloqueo y valida que tiene id y una fecha de bloqueo reciente.
+     */
     @Test
     void testBloqueoResponseDtoConFechaBloqueo() {
         // Crear bloqueo
@@ -183,6 +217,9 @@ class IntegrationTests {
         assertTrue(bloqueo.getFechaBloqueo().isBefore(LocalDateTime.now().plusMinutes(1)));
     }
 
+    /*
+     * Crea un match y valida que estado y fecha de creacion estan presentes y correctos.
+     */
     @Test
     void testMatchResponseDtoConEstadoYFecha() {
         // Crear match
@@ -200,6 +237,10 @@ class IntegrationTests {
         assertEquals(Match.EstadoMatch.ACTIVO, match.getEstado(), "estado debe ser ACTIVO");
     }
 
+    /*
+     * Llama a descubrimiento y comprueba que la respuesta incluye fecha de consulta
+     * y resultados.
+     */
     @Test
     void testDescubrimientoResponseDtoConFechaConsulta() {
         // Llamar al service
@@ -219,6 +260,9 @@ class IntegrationTests {
     // (Solo existe NotificacionResponseDto, pero no la entidad)
     // Sería necesario crear la clase Notificacion.java primero
 
+    /*
+     * Asegura que los resultados de descubrimiento reflejan campos clave del perfil.
+     */
     @Test
     void testCoherenciaPerfilRequestYResponse() {
         // Simular coherencia con el servicio
@@ -237,6 +281,9 @@ class IntegrationTests {
         }
     }
 
+    /*
+     * Valida que SwipeRequestDto define todos los campos requeridos del dominio.
+     */
     @Test
     void testCoherenciaSwipeRequestConDominio() {
         // Validar que SwipeRequestDto tiene todos los atributos del dominio
@@ -255,5 +302,170 @@ class IntegrationTests {
         } catch (NoSuchFieldException e) {
             return false;
         }
+    }
+
+    /*
+     * Registra un usuario y verifica que el login devuelve datos con estado 200.
+     */
+    @Test
+    void login_valido_devuelveUsuario() {
+        String email = "login_" + UUID.randomUUID() + "@test.com";
+        String password = "secreto123";
+
+        Long usuarioId = registrarUsuario(email, password);
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(Map.of("usuarioId", usuarioId, "password", password))
+        .when()
+            .post("/usuarios/login")
+        .then()
+            .statusCode(200)
+            .body("id", equalTo(usuarioId.intValue()))
+            .body("email", equalTo(email))
+            .body("estado", notNullValue());
+    }
+
+    /*
+     * Intenta login con un usuario inexistente y espera error 404.
+     */
+    @Test
+    void login_usuarioNoExiste_devuelve404() {
+        given()
+            .contentType(ContentType.JSON)
+            .body(Map.of("usuarioId", 99999, "password", "cualquiera"))
+        .when()
+            .post("/usuarios/login")
+        .then()
+            .statusCode(404)
+            .body("error", containsString("Usuario no encontrado"));
+    }
+
+    /*
+     * Intenta login con usuario valido y password incorrecta y espera error.
+     */
+    @Test
+    void login_passwordIncorrecta_devuelve500() {
+        String email = "login_bad_" + UUID.randomUUID() + "@test.com";
+        String password = "secreto123";
+
+        Long usuarioId = registrarUsuario(email, password);
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(Map.of("usuarioId", usuarioId, "password", "mal"))
+        .when()
+            .post("/usuarios/login")
+        .then()
+            .statusCode(500);
+    }
+
+    /*
+     * Intenta login sin campos obligatorios y espera error de validacion 400.
+     */
+    @Test
+    void login_camposFaltantes_devuelve400() {
+        given()
+            .contentType(ContentType.JSON)
+            .body(Map.of("password", "secreto123"))
+        .when()
+            .post("/usuarios/login")
+        .then()
+            .statusCode(400);
+    }
+
+    /*
+     * Crea un perfil para un usuario nuevo y espera respuesta 201.
+     */
+    @Test
+    void crearPerfil_valido_devuelve201() {
+        String email = "perfil_" + UUID.randomUUID() + "@test.com";
+        Long usuarioId = registrarUsuario(email, "secreto123");
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(Map.of("nombre", "Paula", "edad", 24))
+        .when()
+            .post("/usuarios/{usuarioId}/perfil", usuarioId)
+        .then()
+            .statusCode(201)
+            .body("id", notNullValue())
+            .body("nombre", equalTo("Paula"))
+            .body("edad", equalTo(24));
+    }
+
+    /*
+     * Intenta crear un perfil para un usuario inexistente y espera 404.
+     */
+    @Test
+    void crearPerfil_usuarioNoExiste_devuelve404() {
+        given()
+            .contentType(ContentType.JSON)
+            .body(Map.of("nombre", "Paula", "edad", 24))
+        .when()
+            .post("/usuarios/{usuarioId}/perfil", 99999)
+        .then()
+            .statusCode(404)
+            .body("error", containsString("Usuario no encontrado"));
+    }
+
+    /*
+     * Intenta crear un perfil para un usuario que ya tiene y espera error.
+     */
+    @Test
+    void crearPerfil_yaExiste_devuelve500() {
+        given()
+            .contentType(ContentType.JSON)
+            .body(Map.of("nombre", "Otro", "edad", 30))
+        .when()
+            .post("/usuarios/{usuarioId}/perfil", usuario1.getId())
+        .then()
+            .statusCode(500);
+    }
+
+    /*
+     * Intenta crear un perfil con nombre vacio y espera error de validacion 400.
+     */
+    @Test
+    void crearPerfil_nombreVacio_devuelve400() {
+        String email = "perfil_bad_" + UUID.randomUUID() + "@test.com";
+        Long usuarioId = registrarUsuario(email, "secreto123");
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(Map.of("nombre", "", "edad", 24))
+        .when()
+            .post("/usuarios/{usuarioId}/perfil", usuarioId)
+        .then()
+            .statusCode(400);
+    }
+
+    /*
+     * Intenta crear un perfil sin edad y espera error de validacion 400.
+     */
+    @Test
+    void crearPerfil_edadNula_devuelve400() {
+        String email = "perfil_bad2_" + UUID.randomUUID() + "@test.com";
+        Long usuarioId = registrarUsuario(email, "secreto123");
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(Map.of("nombre", "Paula"))
+        .when()
+            .post("/usuarios/{usuarioId}/perfil", usuarioId)
+        .then()
+            .statusCode(400);
+    }
+
+    private Long registrarUsuario(String email, String password) {
+        return given()
+            .contentType(ContentType.JSON)
+            .body(Map.of("email", email, "password", password))
+        .when()
+            .post("/usuarios/registro")
+        .then()
+            .statusCode(201)
+            .extract()
+            .path("id");
     }
 }
