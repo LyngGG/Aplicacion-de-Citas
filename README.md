@@ -22,6 +22,74 @@ Backend de una aplicación de citas basada en arquitectura multicapa con Spring 
 
 ---
 
+## Ejecución
+
+### Opción 1: Ejecutar con Maven (Recomendado)
+
+```bash
+# Terminal en: AplicacionCitas/citas-backend/citas-backend/
+
+./mvnw spring-boot:run
+# o en Windows:
+mvnw.cmd spring-boot:run
+```
+
+Salida esperada:
+```
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v4.0.6)
+
+2026-05-24 10:30:45.123  INFO 12345 --- [  main] e.u.f.citas_backend.CitasBackendApplication : Starting CitasBackendApplication...
+2026-05-24 10:30:46.456  INFO 12345 --- [  main] e.u.f.citas_backend.CitasBackendApplication : Started CitasBackendApplication in 1.2 seconds
+```
+
+### Opción 2: Compilar y ejecutar JAR
+
+```bash
+# Compilar
+./mvnw clean package
+
+# Ejecutar el JAR
+java -jar target/citas-backend-0.0.1-SNAPSHOT.jar
+```
+
+### Verificar que está ejecutando
+
+```bash
+# En otra terminal:
+curl http://localhost:8080/usuarios/health
+# Deberías recibir: 200 OK
+```
+
+### Ejecutar tests y cobertura (JaCoCo)
+
+```bash
+# Ejecutar todos los tests
+mvn test
+
+# Alternativa con Maven Wrapper
+./mvnw test
+# o en Windows
+mvnw.cmd test
+```
+
+El reporte de cobertura se genera automaticamente al ejecutar los tests.
+
+Ruta del informe:
+- `citas-backend/citas-backend/target/site/jacoco/index.html`
+
+Abrir en Windows:
+```powershell
+Start-Process -FilePath "c:\Users\prestamo_admin\Desktop\ingenieria software\Entrega 2. Aplicación de Citas\Aplicacion-de-Citas\citas-backend\citas-backend\target\site\jacoco\index.html"
+```
+
+---
+
 ## Descripción General
 
 Este backend implementa un sistema completo de matching de perfiles de citas con las siguientes funcionalidades:
@@ -69,74 +137,6 @@ Este backend implementa un sistema completo de matching de perfiles de citas con
 
 ---
 
-## Tecnologías y Dependencias
-
-Componentes principales del stack tecnológico:
-
-Dependencias principales:
-
-- spring-boot-starter-web
-- spring-boot-starter-websocket
-- spring-boot-starter-security
-- spring-boot-starter-data-jpa
-- spring-boot-starter-validation
-- h2 (base de datos en memoria)
-- jackson (serialización JSON)
-- lombok (reducción de boilerplate)
-- spring-boot-starter-test (testing)
-
-Versiones Clave:
-- Java: 21 (LTS)
-- Spring Boot: 4.0.6
-- Maven: 3.9+
-- Base de Datos: H2 (en memoria para desarrollo)
-
----
-
-## Arquitectura del Proyecto
-
-El backend sigue una arquitectura multicapa limpia y escalable:
-
-CAPA DE PRESENTACIÓN
-(Controllers + REST Endpoints + WebSocket)
-         |
-         v
-CAPA DE SERVICIOS
-(Business Logic + Validación)
-         |
-         v
-CAPA DE DATOS
-(Repositories + JPA Entities)
-         |
-         v
-BASE DE DATOS (H2)
-
-Patrones Utilizados:
-
-1. MVC (Model-View-Controller): Separación clara de responsabilidades
-2. DTO (Data Transfer Object): Encapsulación de datos en requests/responses
-3. Repository Pattern: Abstracción de acceso a datos
-4. Service Layer: Lógica de negocio centralizada
-5. Async Processing: Pool de threads para operaciones no bloqueantes
-6. WebSocket Handler: Comunicación bidireccional en tiempo real
-
----
-
-```text
-citas_backend/
-├── broker/events      → Gestión de eventos y mensajería asíncrona (MessageBroker)
-├── config             → Configuración de la aplicación (seguridad, WebSocket, etc.)
-├── controller         → Capa de controladores (API REST y WebSocket)
-├── domain             → Entidades del modelo de dominio (Usuario, Match, Mensaje, etc.)
-├── dto                → Objetos de transferencia de datos (DTOs)
-├── exception          → Manejadores de excepciones y errores personalizados
-├── fake               → Datos de prueba / implementaciones falsas para testing
-├── repository         → Acceso a datos (repositorios JPA / interfaces DAO)
-├── service            → Lógica de negocio (servicios de aplicación)
-└── websocket          → Gestión de sesiones WebSocket (en tiempo real)
-```
-
-## Estructura del proyecto
 Resumen de carpetas y archivos principales del backend.
 
 ```text
